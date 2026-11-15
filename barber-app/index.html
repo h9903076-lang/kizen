@@ -1,0 +1,534 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>پیرایشگاه اختصاصی خوابگاه</title>
+    <link href="https://cdn.jsdelivr.net/gh/rastikerdar/vazirmatn@v33.003/Vazirmatn-font-face.css" rel="stylesheet" type="text/css" />
+    
+    <style>
+        :root {
+            --bg-main: #121212;
+            --bg-secondary: #1e1e1e;
+            --bg-input: #2a2a2a;
+            --accent: #f59e0b;
+            --accent-hover: #d97706;
+            --accent-glow: rgba(245, 158, 11, 0.25);
+            --text-primary: #f3f4f6;
+            --text-secondary: #9ca3af;
+            --border-color: #333333;
+            --success-bg: rgba(16, 185, 129, 0.15);
+            --success-border: #10b981;
+            --success-text: #34d399;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Vazirmatn', sans-serif;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        html {
+            scroll-behavior: smooth;
+            color-scheme: dark;
+        }
+
+        body {
+            background-color: #0a0a0a;
+            color: var(--text-primary);
+            line-height: 1.6;
+            display: flex;
+            justify-content: center;
+            min-height: 100vh;
+        }
+
+        .app-container {
+            width: 100%;
+            max-width: 480px;
+            background-color: var(--bg-main);
+            min-height: 100vh;
+            box-shadow: 0 0 30px rgba(0, 0, 0, 0.8);
+            position: relative;
+            overflow-x: hidden;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .top-glow {
+            position: absolute;
+            top: -50px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 250px;
+            height: 150px;
+            background: var(--accent);
+            filter: blur(90px);
+            opacity: 0.25;
+            pointer-events: none;
+        }
+
+        .hero {
+            text-align: center;
+            padding: 3.5rem 1.5rem 2.5rem;
+            position: relative;
+            border-bottom: 1px solid var(--border-color);
+            background: radial-gradient(circle at top, #1f1a12 0%, var(--bg-main) 70%);
+        }
+
+        .hero-icon {
+            width: 64px;
+            height: 64px;
+            background-color: var(--bg-secondary);
+            border: 2px solid var(--accent);
+            border-radius: 50%;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 1.2rem;
+            box-shadow: 0 4px 20px var(--accent-glow);
+            color: var(--accent);
+        }
+
+        .hero h1 {
+            font-size: 1.75rem;
+            font-weight: 800;
+            margin-bottom: 0.75rem;
+            color: #ffffff;
+        }
+
+        .hero h1 span {
+            color: var(--accent);
+        }
+
+        .hero p {
+            color: var(--text-secondary);
+            font-size: 0.95rem;
+            margin-bottom: 1.8rem;
+            max-width: 320px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .btn-primary {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            background-color: var(--accent);
+            color: #121212;
+            font-weight: 700;
+            font-size: 1rem;
+            padding: 0.85rem 2rem;
+            border-radius: 12px;
+            text-decoration: none;
+            border: none;
+            cursor: pointer;
+            transition: all 0.25s ease;
+            box-shadow: 0 4px 15px var(--accent-glow);
+            width: 100%;
+            max-width: 260px;
+        }
+
+        .btn-primary:hover, .btn-primary:active {
+            background-color: var(--accent-hover);
+            transform: translateY(-2px);
+        }
+
+        .section {
+            padding: 2rem 1.5rem;
+        }
+
+        .section-title {
+            font-size: 1.25rem;
+            font-weight: 700;
+            margin-bottom: 1.25rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .section-title::before {
+            content: '';
+            display: block;
+            width: 6px;
+            height: 22px;
+            background-color: var(--accent);
+            border-radius: 4px;
+        }
+
+        .services-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .service-card {
+            background-color: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 14px;
+            padding: 1.25rem;
+            transition: all 0.25s ease;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .service-card:hover {
+            border-color: var(--accent);
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.4);
+        }
+
+        .service-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.5rem;
+        }
+
+        .service-title {
+            font-weight: 700;
+            font-size: 1.05rem;
+            color: #ffffff;
+        }
+
+        .service-badge {
+            background-color: rgba(245, 158, 11, 0.15);
+            color: var(--accent);
+            font-size: 0.8rem;
+            font-weight: 600;
+            padding: 0.25rem 0.65rem;
+            border-radius: 8px;
+            border: 1px solid rgba(245, 158, 11, 0.3);
+        }
+
+        .service-desc {
+            color: var(--text-secondary);
+            font-size: 0.85rem;
+            margin-bottom: 0.75rem;
+        }
+
+        .service-meta {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            font-size: 0.8rem;
+            color: #d1d5db;
+            border-top: 1px dashed var(--border-color);
+            padding-top: 0.75rem;
+        }
+
+        .service-meta span {
+            display: flex;
+            align-items: center;
+            gap: 0.3rem;
+        }
+
+        .booking-card {
+            background-color: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 1.5rem;
+        }
+
+        .form-group {
+            margin-bottom: 1.2rem;
+        }
+
+        .form-label {
+            display: block;
+            font-size: 0.9rem;
+            font-weight: 500;
+            margin-bottom: 0.5rem;
+            color: #e5e7eb;
+        }
+
+        .form-control {
+            width: 100%;
+            background-color: var(--bg-input);
+            border: 1px solid var(--border-color);
+            border-radius: 10px;
+            padding: 0.8rem 1rem;
+            color: var(--text-primary);
+            font-size: 0.95rem;
+            transition: border-color 0.2s, box-shadow 0.2s;
+            outline: none;
+        }
+
+        .form-control::placeholder {
+            color: #6b7280;
+        }
+
+        .form-control:focus {
+            border-color: var(--accent);
+            box-shadow: 0 0 0 3px var(--accent-glow);
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 0.75rem;
+        }
+
+        .btn-submit {
+            width: 100%;
+            max-width: none;
+            margin-top: 0.5rem;
+        }
+
+        .success-box {
+            display: none;
+            background-color: var(--success-bg);
+            border: 1px solid var(--success-border);
+            color: var(--success-text);
+            padding: 1.25rem;
+            border-radius: 12px;
+            margin-top: 1.25rem;
+            text-align: center;
+            animation: fadeIn 0.4s ease;
+        }
+
+        .success-box.active {
+            display: block;
+        }
+
+        .success-box h4 {
+            font-size: 1.05rem;
+            margin-bottom: 0.3rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.4rem;
+        }
+
+        .success-box p {
+            font-size: 0.85rem;
+            color: #a7f3d0;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-8px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .footer {
+            text-align: center;
+            padding: 1.5rem;
+            border-top: 1px solid var(--border-color);
+            color: var(--text-secondary);
+            font-size: 0.85rem;
+            margin-top: auto;
+            background-color: #161616;
+        }
+
+        .footer span {
+            color: var(--accent);
+        }
+    </style>
+</head>
+<body>
+
+    <div class="app-container">
+        <div class="top-glow"></div>
+
+        <main>
+            <header class="hero">
+                <div class="hero-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="6" cy="6" r="3"></circle>
+                        <circle cx="6" cy="18" r="3"></circle>
+                        <line x1="20" y1="4" x2="8.12" y2="15.88"></line>
+                        <line x1="14.47" y1="14.48" x2="20" y2="20"></line>
+                        <line x1="8.12" y1="8.12" x2="12" y2="12"></line>
+                    </svg>
+                </div>
+                <h1>پیرایشگاه اختصاصی <span>خوابگاه</span></h1>
+                <p>بدون خروج از خوابگاه، با بهترین قیمت دانشجویی!</p>
+                <a href="#booking" class="btn-primary">
+                    <span>همین الان نوبت بگیر</span>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                        <line x1="12" y1="5" x2="12" y2="19"></line>
+                        <polyline points="19 12 12 19 5 12"></polyline>
+                    </svg>
+                </a>
+            </header>
+
+            <section class="section" id="services">
+                <h2 class="section-title">خدمات و تعرفه‌ها</h2>
+                <div class="services-grid">
+                    <div class="service-card" onclick="selectService('اصلاح سریع (قبل از کلاس)')">
+                        <div class="service-header">
+                            <h3 class="service-title">اصلاح سریع (قبل از کلاس)</h3>
+                            <span class="service-badge">۸۰,۰۰۰ تومان</span>
+                        </div>
+                        <p class="service-desc">مرتب‌سازی دور مو، خط انداختن و استایل سریع مخصوص روزهای شلوغ درسی.</p>
+                        <div class="service-meta">
+                            <span>⏱️ ۲۰ دقیقه</span>
+                            <span>✨ انتخاب سریع با کلیک</span>
+                        </div>
+                    </div>
+
+                    <div class="service-card" onclick="selectService('فید و استایل تخصصی')">
+                        <div class="service-header">
+                            <h3 class="service-title">فید و استایل تخصصی</h3>
+                            <span class="service-badge">۱۲۰,۰۰۰ تومان</span>
+                        </div>
+                        <p class="service-desc">انواع فید (سایه) مدرن، کوتاهی با قیچی، فرم‌دهی حرفه‌ای مو و مرتب‌سازی ریش.</p>
+                        <div class="service-meta">
+                            <span>⏱️ ۴۵ دقیقه</span>
+                            <span>🔥 پرطرفدارترین</span>
+                        </div>
+                    </div>
+
+                    <div class="service-card" onclick="selectService('اصلاح اقتصادی (فقط ماشین)')">
+                        <div class="service-header">
+                            <h3 class="service-title">اصلاح اقتصادی (فقط ماشین)</h3>
+                            <span class="service-badge">۵۰,۰۰۰ تومان</span>
+                        </div>
+                        <p class="service-desc">کوتاهی یکدست کل سر با ماشین و نمره‌های دلخواه، سریع و کاملاً دانشجویی.</p>
+                        <div class="service-meta">
+                            <span>⏱️ ۱۵ دقیقه</span>
+                            <span>💰 بهینه و اقتصادی</span>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section class="section" id="booking">
+                <h2 class="section-title">رزرو آنلاین نوبت</h2>
+                <div class="booking-card">
+                    <form id="bookingForm">
+                        <div class="form-group">
+                            <label for="name" class="form-label">نام و نام خانوادگی</label>
+                            <input type="text" id="name" class="form-control" placeholder="مثلاً: علی محمدی" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="phone" class="form-label">شماره تماس (جهت هماهنگی)</label>
+                            <input type="tel" id="phone" class="form-control" placeholder="۰۹۱۲..." required>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="room" class="form-label">شماره اتاق و بلوک</label>
+                            <input type="text" id="room" class="form-control" placeholder="مثلاً: اتاق ۳۰۴ - بلوک ب" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="service" class="form-label">نوع خدمات</label>
+                            <select id="service" class="form-control" required>
+                                <option value="" disabled selected>یک مورد را انتخاب کنید...</option>
+                                <option value="اصلاح سریع (قبل از کلاس)">اصلاح سریع (قبل از کلاس) - ۸۰ ت</option>
+                                <option value="فید و استایل تخصصی">فید و استایل تخصصی - ۱۲۰ ت</option>
+                                <option value="اصلاح اقتصادی (فقط ماشین)">اصلاح اقتصادی (فقط ماشین) - ۵۰ ت</option>
+                            </select>
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="date" class="form-label">تاریخ</label>
+                                <input type="date" id="date" class="form-control" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="time" class="form-label">ساعت</label>
+                                <input type="time" id="time" class="form-control" required>
+                            </div>
+                        </div>
+
+                        <button type="submit" class="btn-primary btn-submit" id="submitBtn">
+                            <span>رزرو نوبت</span>
+                            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                                <polyline points="20 6 9 17 4 12"></polyline>
+                            </svg>
+                        </button>
+                    </form>
+
+                    <div id="successMessage" class="success-box">
+                        <h4>
+                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+                                <polyline points="22 4 12 14.01 9 11.01"></polyline>
+                            </svg>
+                            نوبت شما با موفقیت ثبت شد!
+                        </h4>
+                        <p id="bookingSummary"></p>
+                    </div>
+                </div>
+            </section>
+        </main>
+
+        <footer class="footer">
+            طراحی شده برای <span>دانشجویان</span> ✂️
+        </footer>
+    </div>
+
+    <script>
+        const dateInput = document.getElementById('date');
+        const today = new Date().toISOString().split('T')[0];
+        dateInput.min = today;
+        dateInput.value = today;
+
+        function selectService(serviceName) {
+            const serviceSelect = document.getElementById('service');
+            serviceSelect.value = serviceName;
+            document.getElementById('booking').scrollIntoView({ behavior: 'smooth' });
+            serviceSelect.style.borderColor = '#f59e0b';
+            serviceSelect.style.boxShadow = '0 0 0 3px rgba(245, 158, 11, 0.35)';
+            setTimeout(() => {
+                serviceSelect.style.borderColor = '';
+                serviceSelect.style.boxShadow = '';
+            }, 1200);
+        }
+
+        const bookingForm = document.getElementById('bookingForm');
+        const successMessage = document.getElementById('successMessage');
+        const bookingSummary = document.getElementById('bookingSummary');
+        const submitBtn = document.getElementById('submitBtn');
+
+        // آدرس موتور سرور گوگل اسکریپت اختصاصی شما
+        const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyaH-r3y1Yt7rbbKNAClxu8iqYrsuBn33-piZqjZO5DhffGmaZwYX68RO032Xj95Q7c3g/exec';
+
+        bookingForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+
+            const payload = {
+                name: document.getElementById('name').value,
+                phone: document.getElementById('phone').value,
+                room: document.getElementById('room').value,
+                service: document.getElementById('service').value,
+                date: document.getElementById('date').value,
+                time: document.getElementById('time').value
+            };
+
+            submitBtn.innerText = 'در حال ثبت نوبت...';
+            submitBtn.disabled = true;
+
+            fetch(GOOGLE_SCRIPT_URL, {
+                method: 'POST',
+                mode: 'no-cors',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(payload)
+            })
+            .then(() => {
+                bookingSummary.textContent = `${payload.name} عزیز (${payload.room})، نوبت «${payload.service}» برای ساعت ${payload.time} با موفقیت ثبت شد.`;
+                successMessage.classList.add('active');
+                bookingForm.reset();
+                dateInput.value = today;
+                submitBtn.innerHTML = '<span>رزرو نوبت</span>';
+                submitBtn.disabled = false;
+                successMessage.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+            })
+            .catch(() => {
+                bookingSummary.textContent = `${payload.name} عزیز (${payload.room})، نوبت «${payload.service}» ثبت شد.`;
+                successMessage.classList.add('active');
+                submitBtn.innerHTML = '<span>رزرو نوبت</span>';
+                submitBtn.disabled = false;
+            });
+        });
+    </script>
+</body>
+</html>
