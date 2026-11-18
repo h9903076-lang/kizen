@@ -1,0 +1,453 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>پیرایشگاه پارسا | رزرو آنلاین نوبت</title>
+  <style>
+    :root {
+      --bg: #0c0d10;
+      --card: #16181d;
+      --card-inner: #1e2128;
+      --gold: #f5b014;
+      --gold-dark: #c98d06;
+      --green: #145338;
+      --green-border: #22c55e;
+      --green-text: #86efac;
+      --full-bg: #272a33;
+      --full-text: #6b7280;
+      --text: #f3f4f6;
+      --muted: #9ca3af;
+      --border: #2d313c;
+    }
+    * { box-sizing: border-box; font-family: Tahoma, 'Segoe UI', sans-serif; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+    body { background: var(--bg); color: var(--text); padding: 14px; line-height: 1.5; }
+    .container { max-width: 460px; margin: 0 auto 30px auto; }
+
+    /* هدر شبیه تصویر نمونه */
+    .header {
+      background: linear-gradient(145deg, #1b1e26, #111317);
+      border: 1px solid #332912;
+      border-radius: 18px;
+      padding: 18px 14px;
+      text-align: center;
+      margin-bottom: 14px;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+    }
+    .logo-badge {
+      width: 54px; height: 54px; margin: 0 auto 8px auto;
+      border-radius: 50%; border: 2px solid var(--gold);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 24px; background: rgba(245, 176, 20, 0.1);
+    }
+    .header h1 { color: var(--gold); font-size: 21px; font-weight: bold; }
+    .header .sub { color: var(--muted); font-size: 12px; margin-top: 2px; }
+    .welcome { margin-top: 12px; padding-top: 10px; border-top: 1px solid var(--border); }
+    .welcome h2 { font-size: 15px; color: #fff; }
+    .welcome p { font-size: 12px; color: var(--muted); margin-top: 3px; }
+
+    /* کارت‌های بخش‌بندی */
+    .card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      padding: 14px;
+      margin-bottom: 14px;
+    }
+    .section-title { font-size: 14px; font-weight: bold; color: #fff; margin-bottom: 10px; display: flex; align-items: center; justify-content: space-between; }
+
+    /* انتخاب نوع خدمت */
+    .services-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+    .service-btn {
+      background: var(--card-inner);
+      border: 1.5px solid var(--border);
+      border-radius: 12px;
+      padding: 10px 8px;
+      text-align: center;
+      cursor: pointer;
+      color: var(--text);
+      transition: 0.2s;
+    }
+    .service-btn .s-name { font-size: 13px; font-weight: bold; display: block; }
+    .service-btn .s-meta { font-size: 11px; color: var(--muted); margin-top: 3px; display: block; }
+    .service-btn.active {
+      background: var(--gold);
+      border-color: var(--gold);
+      color: #000;
+    }
+    .service-btn.active .s-meta { color: #1f1907; font-weight: bold; }
+
+    /* تقویم ماهانه کامل */
+    .cal-top { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; }
+    .today-btn {
+      background: rgba(245, 176, 20, 0.15);
+      border: 1px solid var(--gold);
+      color: var(--gold);
+      padding: 5px 10px;
+      border-radius: 8px;
+      font-size: 12px;
+      cursor: pointer;
+      font-weight: bold;
+    }
+    .month-nav { display: flex; align-items: center; gap: 12px; }
+    .nav-arrow {
+      background: var(--card-inner); border: 1px solid var(--border); color: var(--gold);
+      width: 30px; height: 30px; border-radius: 8px; cursor: pointer; font-size: 15px; font-weight: bold;
+    }
+    .month-label { font-size: 15px; font-weight: bold; color: #fff; min-width: 95px; text-align: center; }
+    .weekdays { display: grid; grid-template-columns: repeat(7, 1fr); text-align: center; font-size: 12px; color: var(--muted); margin-bottom: 8px; font-weight: bold; }
+    .days-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 6px; }
+    .day-cell {
+      aspect-ratio: 1 / 1;
+      background: var(--card-inner);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 13px; font-weight: bold; color: #fff; cursor: pointer;
+    }
+    .day-cell.empty { background: transparent; border: none; cursor: default; }
+    .day-cell.past { opacity: 0.3; cursor: not-allowed; text-decoration: line-through; }
+    .day-cell.selected { background: var(--gold); color: #000; border-color: var(--gold); box-shadow: 0 0 12px rgba(245, 176, 20, 0.4); }
+
+    .legend { display: flex; justify-content: center; gap: 16px; margin-top: 12px; padding-top: 10px; border-top: 1px solid var(--border); font-size: 11px; color: var(--muted); }
+    .legend span { display: flex; align-items: center; gap: 5px; }
+    .dot { width: 9px; height: 9px; border-radius: 50%; display: inline-block; }
+
+    /* شبکه ساعات */
+    .shift-title { font-size: 12px; color: var(--gold); margin: 10px 0 6px 0; font-weight: bold; }
+    .slots-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 7px; }
+    .slot-btn {
+      border-radius: 10px;
+      padding: 8px 4px;
+      text-align: center;
+      cursor: pointer;
+      border: 1px solid transparent;
+      transition: 0.15s;
+    }
+    .slot-btn .t-val { font-size: 13px; font-weight: bold; display: block; direction: ltr; }
+    .slot-btn .t-stat { font-size: 10px; display: block; margin-top: 2px; }
+
+    /* وضعیت آزاد (سبز) */
+    .slot-btn.free { background: var(--green); border-color: var(--green-border); color: #fff; }
+    .slot-btn.free .t-stat { color: var(--green-text); }
+
+    /* وضعیت تکمیل (خاکستری قفل) */
+    .slot-btn.full { background: var(--full-bg); border-color: #374151; color: var(--full-text); cursor: not-allowed; }
+    .slot-btn.full .t-stat { color: #ef4444; }
+
+    /* وضعیت انتخاب شما (طلایی) */
+    .slot-btn.picked { background: var(--gold); border-color: #fff; color: #000; transform: scale(1.03); }
+    .slot-btn.picked .t-stat { color: #000; font-weight: bold; }
+
+    /* خلاصه انتخاب و فرم ثبت */
+    .summary-box {
+      background: var(--card-inner);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 12px;
+      margin-bottom: 12px;
+      font-size: 13px;
+    }
+    .sum-row { display: flex; justify-content: space-between; margin-bottom: 6px; }
+    .sum-row:last-child { margin-bottom: 0; }
+    .sum-row span:first-child { color: var(--muted); }
+    .sum-row span:last-child { color: #fff; font-weight: bold; }
+
+    .input-group { margin-bottom: 10px; }
+    .input-group input {
+      width: 100%; background: var(--card-inner); border: 1px solid var(--border);
+      border-radius: 10px; padding: 11px 12px; color: #fff; font-size: 14px; outline: none;
+    }
+    .input-group input:focus { border-color: var(--gold); }
+
+    .submit-btn {
+      width: 100%; background: var(--gold); color: #000; border: none;
+      border-radius: 12px; padding: 14px; font-size: 15px; font-weight: bold;
+      cursor: pointer; box-shadow: 0 6px 18px rgba(245, 176, 20, 0.3);
+    }
+    .submit-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+    /* پیام هشدار شناور (Toast) */
+    #toast {
+      position: fixed; top: 18px; left: 50%; transform: translateX(-50%);
+      background: #dc2626; color: #fff; padding: 12px 18px; border-radius: 12px;
+      font-size: 13px; font-weight: bold; z-index: 9999; display: none;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.6); text-align: center; max-width: 90%;
+    }
+    #toast.success { background: #16a34a; }
+    .loader { text-align: center; padding: 16px; color: var(--gold); font-size: 13px; }
+  </style>
+</head>
+<body>
+
+<div id="toast"></div>
+
+<div class="container">
+  <!-- هدر -->
+  <div class="header">
+    <div class="logo-badge">✂️</div>
+    <h1>پیرایشگاه پارسا</h1>
+    <div class="sub">— پیرایشگاه اختصاصی خوابگاه —</div>
+    <div class="welcome">
+      <h2>سلام دانشجو عزیز! 👋</h2>
+      <p>خدمت، تاریخ و ساعت مورد نظرت را انتخاب کن.</p>
+    </div>
+  </div>
+
+  <!-- ۱. انتخاب خدمت -->
+  <div class="card">
+    <div class="section-title"><span>۱. انتخاب نوع اصلاح</span></div>
+    <div class="services-grid" id="servicesGrid">
+      <div class="service-btn active" data-name="اصلاح صورت" data-dur="20" data-price="۸۰ هزار تومان" onclick="selectService(this)">
+        <span class="s-name">اصلاح صورت</span>
+        <span class="s-meta">۲۰ دقیقه • ۸۰ ت</span>
+      </div>
+      <div class="service-btn" data-name="دور سر (فید)" data-dur="40" data-price="۱۰۰ هزار تومان" onclick="selectService(this)">
+        <span class="s-name">دور سر (فید)</span>
+        <span class="s-meta">۴۰ دقیقه • ۱۰۰ ت</span>
+      </div>
+      <div class="service-btn" data-name="اصلاح کل سر" data-dur="60" data-price="۱۳۰ هزار تومان" onclick="selectService(this)">
+        <span class="s-name">اصلاح کل سر</span>
+        <span class="s-meta">۶۰ دقیقه • ۱۳۰ ت</span>
+      </div>
+      <div class="service-btn" data-name="سر و صورت کامل" data-dur="60" data-price="۱۸۰ هزار تومان" onclick="selectService(this)">
+        <span class="s-name">سر و صورت کامل</span>
+        <span class="s-meta">۶۰ دقیقه • ۱۸۰ ت</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ۲. تقویم ماهانه کامل -->
+  <div class="card">
+    <div class="cal-top">
+      <button class="today-btn" onclick="goToday()">📅 امروز</button>
+      <div class="month-nav">
+        <button class="nav-arrow" onclick="changeMonth(-1)">›</button>
+        <div class="month-label" id="monthLabel">آذر ۱۴۰۵</div>
+        <button class="nav-arrow" onclick="changeMonth(1)">‹</button>
+      </div>
+    </div>
+    <div class="weekdays">
+      <div>ش</div><div>ی</div><div>د</div><div>س</div><div>چ</div><div>پ</div><div>ج</div>
+    </div>
+    <div class="days-grid" id="daysGrid"></div>
+    <div class="legend">
+      <span><i class="dot" style="background:#22c55e"></i> آزاد</span>
+      <span><i class="dot" style="background:#6b7280"></i> تکمیل</span>
+      <span><i class="dot" style="background:#f5b014"></i> انتخاب شما</span>
+    </div>
+  </div>
+
+  <!-- ۳. ساعات نوبت‌دهی -->
+  <div class="card">
+    <div class="section-title">
+      <span>🕒 ساعات نوبت‌دهی - <span id="selectedDateTitle" style="color:var(--gold)"></span></span>
+    </div>
+    <div id="loadingSlots" class="loader" style="display:none;">در حال دریافت وضعیت ساعات از سرور...</div>
+    <div id="slotsContainer">
+      <div class="shift-title">نوبت صبح (۱۰:۰۰ تا ۱۳:۰۰)</div>
+      <div class="slots-grid" id="morningSlots"></div>
+      <div class="shift-title" style="margin-top:14px;">نوبت عصر (۱۶:۰۰ تا ۲۲:۰۰)</div>
+      <div class="slots-grid" id="eveningSlots"></div>
+    </div>
+  </div>
+
+  <!-- ۴. خلاصه انتخاب و ثبت قطعی -->
+  <div class="card">
+    <div class="summary-box">
+      <div class="sum-row"><span>خدمت انتخابی:</span><span id="sumService">اصلاح صورت (۲۰ دقیقه)</span></div>
+      <div class="sum-row"><span>تاریخ انتخابی:</span><span id="sumDate">—</span></div>
+      <div class="sum-row"><span>ساعت انتخابی:</span><span id="sumTime" style="color:var(--gold)">انتخاب نشده</span></div>
+    </div>
+    <div class="input-group">
+      <input type="text" id="custName" placeholder="نام و نام خانوادگی (مثلاً: علی رضایی)">
+    </div>
+    <div class="input-group">
+      <input type="tel" id="custPhone" placeholder="شماره موبایل (مثلاً: 09123456789)" dir="ltr" style="text-align:right;">
+    </div>
+    <button class="submit-btn" id="submitBtn" onclick="bookAppointment()">تأیید و ثبت نوبت ✓</button>
+  </div>
+</div>
+
+<script>
+  const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwEDQLqbdGADzy3fu9T1DyMsRl5ajFFJ7XuJ_GjG6j5vLQJo_bF1N_Yx2aEbNQHo4SwbA/exec";
+
+  // تبدیل تاریخ میلادی به شمسی دقیق
+  function gregorianToJalali(gy, gm, gd) {
+    var g_d_m = [0, 31, 59, 90, 120, 151, 181, 212, 243, 273, 304, 334];
+    var gy2 = (gm > 2) ? (gy + 1) : gy;
+    var days = 355666 + (365 * gy) + ~~((gy2 + 3) / 4) - ~~((gy2 + 99) / 100) + ~~((gy2 + 399) / 400) + gd + g_d_m[gm - 1];
+    var jy = -1595 + (33 * ~~(days / 12053));
+    days %= 12053;
+    jy += 4 * ~~(days / 1461);
+    days %= 1461;
+    if (days > 365) { jy += ~~((days - 1) / 365); days = (days - 1) % 365; }
+    var jm = (days < 186) ? 1 + ~~(days / 31) : 7 + ~~((days - 186) / 30);
+    var jd = 1 + ((days < 186) ? (days % 31) : ((days - 186) % 30));
+    return [jy, jm, jd];
+  }
+
+  function jalaliToGregorian(jy, jm, jd) {
+    jy += 1595;
+    var days = -355668 + (365 * jy) + (~~(jy / 33) * 8) + ~~(((jy % 33) + 3) / 4) + jd + ((jm < 7) ? (jm - 1) * 31 : ((jm - 7) * 30) + 186);
+    var gy = 400 * ~~(days / 146097);
+    days %= 146097;
+    if (days > 36524) { gy += 100 * ~~(--days / 36524); days %= 36524; if (days >= 365) days++; }
+    gy += 4 * ~~(days / 1461);
+    days %= 1461;
+    if (days > 365) { gy += ~~((days - 1) / 365); days = (days - 1) % 365; }
+    var gd = days + 1;
+    var sal_a = [0, 31, ((gy % 4 === 0 && gy % 100 !== 0) || (gy % 400 === 0)) ? 29 : 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
+    var gm = 0;
+    while (gm < 13 && gd > sal_a[gm]) { gd -= sal_a[gm]; gm++; }
+    return new Date(gy, gm - 1, gd);
+  }
+
+  const jMonths = ["", "فروردین", "اردیبهشت", "خرداد", "تیر", "مرداد", "شهریور", "مهر", "آبان", "آذر", "دی", "بهمن", "اسفند"];
+  const toFa = (n) => String(n).replace(/\d/g, d => '۰۱۲۳۴۵۶۷۸۹'[d]);
+  const pad = (n) => String(n).padStart(2, '0');
+
+  const now = new Date();
+  const todayJ = gregorianToJalali(now.getFullYear(), now.getMonth() + 1, now.getDate());
+
+  let viewYear = todayJ[0];
+  let viewMonth = todayJ[1];
+  let selectedDateStr = `${todayJ[0]}/${pad(todayJ[1])}/${pad(todayJ[2])}`;
+  let selectedDateFa = `${toFa(todayJ[2])} ${jMonths[todayJ[1]]} ${toFa(todayJ[0])}`;
+
+  let currentService = { name: "اصلاح صورت", dur: 20, price: "۸۰ هزار تومان" };
+  let selectedSlot = null;
+  let bookedBookings = []; // آرایه رزروهای ثبت‌شده آن روز: [{startMin, endMin}, ...]
+
+  // تولید بلوک‌های ۲۰ دقیقه‌ای
+  const morningTimes = ["10:00","10:20","10:40","11:00","11:20","11:40","12:00","12:20","12:40"];
+  const eveningTimes = ["16:00","16:20","16:40","17:00","17:20","17:40","18:00","18:20","18:40","19:00","19:20","19:40","20:00","20:20","20:40","21:00","21:20","21:40"];
+
+  function timeToMin(t) {
+    const [h, m] = t.split(':').map(Number);
+    return h * 60 + m;
+  }
+
+  function showToast(msg, isSuccess = false) {
+    const t = document.getElementById('toast');
+    t.textContent = msg;
+    t.className = isSuccess ? 'success' : '';
+    t.style.display = 'block';
+    setTimeout(() => { t.style.display = 'none'; }, 3500);
+  }
+
+  function selectService(el) {
+    document.querySelectorAll('.service-btn').forEach(b => b.classList.remove('active'));
+    el.classList.add('active');
+    currentService = {
+      name: el.dataset.name,
+      dur: parseInt(el.dataset.dur),
+      price: el.dataset.price
+    };
+    selectedSlot = null;
+    document.getElementById('sumService').textContent = `${currentService.name} (${toFa(currentService.dur)} دقیقه)`;
+    document.getElementById('sumTime').textContent = "انتخاب نشده";
+    renderSlots();
+  }
+
+  function isLeapJalali(jy) {
+    return (((((jy - 474) % 2820) + 2820) % 2820 + 474 + 38) * 682) % 2816 < 682;
+  }
+
+  function getDaysInJalaliMonth(jy, jm) {
+    if (jm <= 6) return 31;
+    if (jm <= 11) return 30;
+    return isLeapJalali(jy) ? 30 : 29;
+  }
+
+  function renderCalendar() {
+    document.getElementById('monthLabel').textContent = `${jMonths[viewMonth]} ${toFa(viewYear)}`;
+    const grid = document.getElementById('daysGrid');
+    grid.innerHTML = '';
+
+    const firstDayG = jalaliToGregorian(viewYear, viewMonth, 1);
+    const startWeekday = (firstDayG.getDay() + 1) % 7; // شنبه=0 ... جمعه=6
+    const daysCount = getDaysInJalaliMonth(viewYear, viewMonth);
+
+    for (let i = 0; i < startWeekday; i++) {
+      const empty = document.createElement('div');
+      empty.className = 'day-cell empty';
+      grid.appendChild(empty);
+    }
+
+    const todayNum = todayJ[0] * 10000 + todayJ[1] * 100 + todayJ[2];
+
+    for (let d = 1; d <= daysCount; d++) {
+      const cell = document.createElement('div');
+      cell.className = 'day-cell';
+      cell.textContent = toFa(d);
+
+      const cellNum = viewYear * 10000 + viewMonth * 100 + d;
+      const dateStr = `${viewYear}/${pad(viewMonth)}/${pad(d)}`;
+
+      if (cellNum < todayNum) {
+        cell.classList.add('past');
+        cell.onclick = () => showToast("تاریخ‌های گذشته قابل انتخاب نیستند.");
+      } else {
+        if (dateStr === selectedDateStr) cell.classList.add('selected');
+        cell.onclick = () => {
+          selectedDateStr = dateStr;
+          selectedDateFa = `${toFa(d)} ${jMonths[viewMonth]} ${toFa(viewYear)}`;
+          selectedSlot = null;
+          document.getElementById('sumTime').textContent = "انتخاب نشده";
+          renderCalendar();
+          fetchDayBookings();
+        };
+      }
+      grid.appendChild(cell);
+    }
+
+    document.getElementById('selectedDateTitle').textContent = selectedDateFa;
+    document.getElementById('sumDate').textContent = selectedDateFa;
+  }
+
+  function changeMonth(delta) {
+    viewMonth += delta;
+    if (viewMonth > 12) { viewMonth = 1; viewYear++; }
+    if (viewMonth < 1) { viewMonth = 12; viewYear--; }
+    renderCalendar();
+  }
+
+  function goToday() {
+    viewYear = todayJ[0];
+    viewMonth = todayJ[1];
+    selectedDateStr = `${todayJ[0]}/${pad(todayJ[1])}/${pad(todayJ[2])}`;
+    selectedDateFa = `${toFa(todayJ[2])} ${jMonths[todayJ[1]]} ${toFa(todayJ[0])}`;
+    selectedSlot = null;
+    document.getElementById('sumTime').textContent = "انتخاب نشده";
+    renderCalendar();
+    fetchDayBookings();
+  }
+
+  // دریافت لیست نوبت‌های پرشده آن روز از گوگل شیت
+  async function fetchDayBookings() {
+    document.getElementById('loadingSlots').style.display = 'block';
+    document.getElementById('slotsContainer').style.opacity = '0.4';
+    bookedBookings = [];
+
+    try {
+      const res = await fetch(`${SCRIPT_URL}?action=get&date=${encodeURIComponent(selectedDateStr)}`);
+      const data = await res.json();
+      if (data && Array.isArray(data.bookings)) {
+        bookedBookings = data.bookings.map(b => {
+          const sMin = timeToMin(b.time);
+          const dur = parseInt(b.duration) || 20;
+          return { start: sMin, end: sMin + dur };
+        });
+      }
+    } catch (e) {
+      console.log("Error fetching bookings:", e);
+    }
+
+    document.getElementById('loadingSlots').style.display = 'none';
+    document.getElementById('slotsContainer').style.opacity = '1';
+    renderSlots();
+  }
+
+  // بررسی دقیق تداخل زمانی به سمت جلو (Forward Overlap Check)
+  function isSlotBlocked(slotStr, shiftEndMin)
