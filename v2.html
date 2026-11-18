@@ -1,0 +1,387 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>نوبت‌دهی آنلاین | پیرایشگاه پارسا</title>
+  <style>
+    :root {
+      --bg: #0f172a;
+      --card: #1e293b;
+      --gold: #f59e0b;
+      --gold-hover: #d97706;
+      --text: #f8fafc;
+      --muted: #94a3b8;
+      --border: #334155;
+      --danger: #ef4444;
+      --success: #10b981;
+    }
+    * { box-sizing: border-box; font-family: Tahoma, 'Segoe UI', sans-serif; margin: 0; padding: 0; }
+    body { background: var(--bg); color: var(--text); padding: 14px; line-height: 1.6; }
+    .container { max-width: 480px; margin: 0 auto; }
+    .header {
+      background: linear-gradient(145deg, #1e293b, #0f172a);
+      border: 1px solid var(--gold);
+      border-radius: 16px;
+      padding: 18px;
+      text-align: center;
+      margin-bottom: 16px;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.4);
+    }
+    .header h1 { color: var(--gold); font-size: 22px; margin-bottom: 6px; }
+    .header p { font-size: 13px; color: var(--muted); margin-bottom: 8px; }
+    .phone-badge {
+      display: inline-block; background: rgba(245, 158, 11, 0.15); color: var(--gold);
+      padding: 4px 12px; border-radius: 20px; font-size: 13px; text-decoration: none; font-weight: bold;
+    }
+    .card {
+      background: var(--card); border: 1px solid var(--border);
+      border-radius: 14px; padding: 16px; margin-bottom: 14px;
+    }
+    .step-title { font-size: 14px; font-weight: bold; color: var(--gold); margin-bottom: 12px; display: flex; align-items: center; gap: 6px; }
+    .services-grid { display: grid; grid-template-columns: 1fr; gap: 8px; }
+    .service-btn {
+      background: var(--bg); border: 1px solid var(--border); color: var(--text);
+      padding: 12px 14px; border-radius: 10px; display: flex; justify-content: space-between;
+      align-items: center; cursor: pointer; transition: 0.2s; font-size: 14px;
+    }
+    .service-btn.active { border-color: var(--gold); background: rgba(245, 158, 11, 0.15); font-weight: bold; }
+    .service-time { background: #334155; padding: 2px 8px; border-radius: 6px; font-size: 12px; color: var(--gold); }
+    .days-scroll { display: flex; gap: 8px; overflow-x: auto; padding-bottom: 6px; }
+    .day-card {
+      min-width: 82px; background: var(--bg); border: 1px solid var(--border);
+      border-radius: 10px; padding: 10px 6px; text-align: center; cursor: pointer; flex-shrink: 0;
+    }
+    .day-card.active { border-color: var(--gold); background: rgba(245, 158, 11, 0.18); }
+    .day-card.closed { opacity: 0.45; cursor: not-allowed; border-color: var(--danger); }
+    .day-name { font-size: 12px; color: var(--muted); }
+    .day-date { font-size: 14px; font-weight: bold; margin: 4px 0; }
+    .day-status { font-size: 11px; color: var(--gold); }
+    .day-card.closed .day-status { color: var(--danger); }
+    .slots-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+    .slot-btn {
+      background: var(--bg); border: 1px solid var(--border); color: var(--text);
+      padding: 10px 4px; border-radius: 8px; text-align: center; cursor: pointer; font-size: 14px; font-weight: bold;
+    }
+    .slot-btn.active { background: var(--gold); color: #000; border-color: var(--gold); }
+    .slot-btn.booked {
+      background: #1e1b1e; border-color: #451a1a; color: #7f1d1d;
+      text-decoration: line-through; cursor: not-allowed; font-size: 12px;
+    }
+    .input-group { margin-bottom: 12px; }
+    .input-group label { display: block; font-size: 13px; color: var(--muted); margin-bottom: 5px; }
+    .input-group input {
+      width: 100%; background: var(--bg); border: 1px solid var(--border);
+      color: var(--text); padding: 11px 12px; border-radius: 10px; font-size: 14px; outline: none;
+    }
+    .input-group input:focus { border-color: var(--gold); }
+    .submit-btn {
+      width: 100%; background: var(--gold); color: #000; border: none;
+      padding: 14px; border-radius: 12px; font-size: 15px; font-weight: bold;
+      cursor: pointer; transition: 0.2s;
+    }
+    .submit-btn:disabled { opacity: 0.6; cursor: not-allowed; }
+    .alert {
+      padding: 14px; border-radius: 12px; margin-top: 14px; font-size: 13px; display: none; text-align: center; font-weight: bold;
+    }
+    .alert.success { background: rgba(16, 185, 129, 0.15); border: 1px solid var(--success); color: #34d399; }
+    .alert.error { background: rgba(239, 68, 68, 0.15); border: 1px solid var(--danger); color: #f87171; }
+    .loader { text-align: center; font-size: 13px; color: var(--gold); padding: 12px; }
+  </style>
+</head>
+<body>
+
+<div class="container">
+  <div class="header">
+    <h1>✂️ پیرایشگاه پارسا</h1>
+    <p>📍 خوابگاه یک، کنار کتابخانه، پایین پله‌ها</p>
+    <a href="tel:09182139651" class="phone-badge">📞 09182139651</a>
+  </div>
+
+  <!-- ۱. انتخاب خدمت -->
+  <div class="card">
+    <div class="step-title">۱. انتخاب نوع خدمت</div>
+    <div class="services-grid" id="servicesList">
+      <div class="service-btn active" data-name="اصلاح صورت" data-duration="20" onclick="selectService(this)">
+        <span>🧔 اصلاح صورت</span>
+        <span class="service-time">۲۰ دقیقه</span>
+      </div>
+      <div class="service-btn" data-name="دور سر" data-duration="40" onclick="selectService(this)">
+        <span>✂️ دور سر</span>
+        <span class="service-time">۴۰ دقیقه</span>
+      </div>
+      <div class="service-btn" data-name="کل سر" data-duration="60" onclick="selectService(this)">
+        <span>💇‍♂️ کل سر</span>
+        <span class="service-time">۱ ساعت</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ۲. انتخاب روز -->
+  <div class="card">
+    <div class="step-title">۲. انتخاب روز (تقویم شمسی)</div>
+    <div class="days-scroll" id="daysContainer"></div>
+  </div>
+
+  <!-- ۳. انتخاب ساعت -->
+  <div class="card">
+    <div class="step-title">۳. انتخاب ساعت خالی</div>
+    <div id="slotsLoading" class="loader">در حال دریافت ساعات خالی از سرور...</div>
+    <div class="slots-grid" id="slotsContainer"></div>
+  </div>
+
+  <!-- ۴. مشخصات دانشجو -->
+  <div class="card">
+    <div class="step-title">۴. مشخصات رزرو کننده</div>
+    <div class="input-group">
+      <label>نام و نام خانوادگی</label>
+      <input type="text" id="custName" placeholder="مثلاً: علی محمدی">
+    </div>
+    <div class="input-group">
+      <label>شماره تماس (جهت هماهنگی)</label>
+      <input type="tel" id="custPhone" placeholder="09123456789" maxlength="11" dir="ltr">
+    </div>
+    <button class="submit-btn" id="submitBtn" onclick="submitBooking()">ثبت قطعی نوبت</button>
+    <div id="alertBox" class="alert"></div>
+  </div>
+</div>
+
+<script>
+  const API_URL = "https://script.google.com/macros/s/AKfycbwEDQLqbdGADzy3fu9T1DyMsRl5ajFFJ7XuJ_GjG6j5vLQJo_bF1N_Yx2aEbNQHo4SwbA/exec";
+
+  // برنامه کاری هفتگی (0=یکشنبه ... 6=شنبه)
+  const SCHEDULE = {
+    6: { name: "شنبه", start: "20:00", end: "23:00", open: true },
+    0: { name: "یکشنبه", start: "20:00", end: "22:30", open: true },
+    1: { name: "دوشنبه", start: "17:30", end: "19:30", open: true },
+    2: { name: "سه‌شنبه", open: false },
+    3: { name: "چهارشنبه", start: "20:00", end: "23:00", open: true },
+    4: { name: "پنج‌شنبه", start: "19:30", end: "22:30", open: true },
+    5: { name: "جمعه", open: false }
+  };
+
+  const JALALI_MONTHS = ["فروردین", "اردیبهشت", "خرداد", "تیر", "مرداد", "شهریور", "مهر", "آبان", "آذر", "دی", "بهمن", "اسفند"];
+
+  let selectedService = { name: "اصلاح صورت", duration: 20 };
+  let selectedDay = null;
+  let selectedTime = null;
+  let bookedData = [];
+  let isDataLoaded = false;
+
+  // تبدیل دقیق میلادی به شمسی
+  function toJalali(gy, gm, gd) {
+    const g_d_m = [0, 31, 59, 90, 120, 151, 181, 212, 243, 273, 304, 334];
+    let gy2 = (gm > 2) ? (gy + 1) : gy;
+    let days = 355666 + (365 * gy) + ~~((gy2 + 3) / 4) - ~~((gy2 + 99) / 100) + ~~((gy2 + 399) / 400) + gd + g_d_m[gm - 1];
+    let jy = -1595 + (33 * ~~(days / 12053));
+    days %= 12053;
+    jy += 4 * ~~(days / 1461);
+    days %= 1461;
+    if (days > 365) {
+      jy += ~~((days - 1) / 365);
+      days = (days - 1) % 365;
+    }
+    let jm = (days < 186) ? 1 + ~~(days / 31) : 7 + ~~((days - 186) / 30);
+    let jd = 1 + ((days < 186) ? (days % 31) : ((days - 186) % 30));
+    return { jy, jm, jd, text: `${jd} ${JALALI_MONTHS[jm - 1]}`, full: `${jy}/${String(jm).padStart(2,'0')}/${String(jd).padStart(2,'0')}` };
+  }
+
+  function timeToMin(t) {
+    const [h, m] = t.split(":").map(Number);
+    return h * 60 + m;
+  }
+
+  function minToTime(m) {
+    const h = String(Math.floor(m / 60)).padStart(2, "0");
+    const min = String(m % 60).padStart(2, "0");
+    return `${h}:${min}`;
+  }
+
+  function initDays() {
+    const container = document.getElementById("daysContainer");
+    container.innerHTML = "";
+    const today = new Date();
+    let firstOpenSet = false;
+
+    for (let i = 0; i < 10; i++) {
+      const d = new Date(today);
+      d.setDate(today.getDate() + i);
+      const dow = d.getDay();
+      const sched = SCHEDULE[dow];
+      const jalali = toJalali(d.getFullYear(), d.getMonth() + 1, d.getDate());
+      const gDateStr = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+
+      const card = document.createElement("div");
+      card.className = "day-card" + (!sched.open ? " closed" : "");
+      const labelDay = i === 0 ? "امروز (" + sched.name + ")" : sched.name;
+
+      card.innerHTML = `
+        <div class="day-name">${labelDay}</div>
+        <div class="day-date">${jalali.text}</div>
+        <div class="day-status">${sched.open ? sched.start + " تا " + sched.end : "تعطیل"}</div>
+      `;
+
+      if (sched.open) {
+        const dayObj = { gDate: gDateStr, jFull: jalali.full, jText: `${sched.name} ${jalali.text}`, sched, isToday: i === 0 };
+        card.onclick = () => {
+          document.querySelectorAll(".day-card").forEach(c => c.classList.remove("active"));
+          card.classList.add("active");
+          selectedDay = dayObj;
+          selectedTime = null;
+          renderSlots();
+        };
+        if (!firstOpenSet) {
+          card.classList.add("active");
+          selectedDay = dayObj;
+          firstOpenSet = true;
+        }
+      }
+      container.appendChild(card);
+    }
+  }
+
+  function selectService(el) {
+    document.querySelectorAll(".service-btn").forEach(b => b.classList.remove("active"));
+    el.classList.add("active");
+    selectedService = {
+      name: el.getAttribute("data-name"),
+      duration: Number(el.getAttribute("data-duration"))
+    };
+    selectedTime = null;
+    renderSlots();
+  }
+
+  async function fetchBookings() {
+    const loader = document.getElementById("slotsLoading");
+    loader.style.display = "block";
+    try {
+      const res = await fetch(API_URL);
+      const json = await res.json();
+      if (json.status === "ok") {
+        bookedData = json.bookings || [];
+        isDataLoaded = true;
+      }
+    } catch (e) {
+      loader.innerText = "خطا در دریافت لیست ساعات. اینترنت را بررسی و صفحه را رفرش کنید.";
+      loader.style.color = "#ef4444";
+      return;
+    }
+    loader.style.display = "none";
+    renderSlots();
+  }
+
+  function renderSlots() {
+    const container = document.getElementById("slotsContainer");
+    container.innerHTML = "";
+    if (!selectedDay || !isDataLoaded) return;
+
+    const startMin = timeToMin(selectedDay.sched.start);
+    const endMin = timeToMin(selectedDay.sched.end);
+    const dur = selectedService.duration;
+
+    const now = new Date();
+    const currentMin = now.getHours() * 60 + now.getMinutes();
+
+    const dayBookings = bookedData.filter(b => b.date === selectedDay.gDate).map(b => ({
+      start: timeToMin(b.time),
+      end: timeToMin(b.time) + b.duration
+    }));
+
+    let hasAnySlot = false;
+    for (let t = startMin; t + dur <= endMin; t += 20) {
+      hasAnySlot = true;
+      const timeStr = minToTime(t);
+      const slotEnd = t + dur;
+
+      const isPast = selectedDay.isToday && (t <= currentMin + 10);
+      const isConflict = dayBookings.some(b => t < b.end && slotEnd > b.start);
+
+      const btn = document.createElement("div");
+      if (isPast || isConflict) {
+        btn.className = "slot-btn booked";
+        btn.innerText = isPast ? timeStr + " (گذشته)" : timeStr + " (پر شد)";
+      } else {
+        btn.className = "slot-btn" + (selectedTime === timeStr ? " active" : "");
+        btn.innerText = timeStr;
+        btn.onclick = () => {
+          document.querySelectorAll(".slot-btn").forEach(s => s.classList.remove("active"));
+          btn.classList.add("active");
+          selectedTime = timeStr;
+        };
+      }
+      container.appendChild(btn);
+    }
+
+    if (!hasAnySlot) {
+      container.innerHTML = "<div style='grid-column:1/-1;text-align:center;color:#94a3b8;font-size:13px;'>برای این خدمت بازه زمانی کافی وجود ندارد.</div>";
+    }
+  }
+
+  async function submitBooking() {
+    const name = document.getElementById("custName").value.trim();
+    const phone = document.getElementById("custPhone").value.trim().replace(/[۰-۹]/g, d => "۰۱۲۳۴۵۶۷۸۹".indexOf(d));
+    const alertBox = document.getElementById("alertBox");
+    const btn = document.getElementById("submitBtn");
+
+    alertBox.style.display = "none";
+
+    if (!selectedTime) return showAlert("لطفاً ابتدا یک ساعت خالی را انتخاب کنید.", "error");
+    if (name.length < 3) return showAlert("لطفاً نام و نام خانوادگی خود را کامل وارد کنید.", "error");
+    if (!/^09\d{9}$/.test(phone)) return showAlert("شماره موبایل باید ۱۱ رقم باشد و با 09 شروع شود.", "error");
+
+    btn.disabled = true;
+    btn.innerText = "⏳ در حال ارتباط با سرور و ارسال به تلگرام...";
+
+    try {
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 15000);
+
+      const response = await fetch(API_URL, {
+        method: "POST",
+        headers: { "Content-Type": "text/plain;charset=utf-8" },
+        body: JSON.stringify({
+          jDate: `${selectedDay.jText} (${selectedDay.jFull})`,
+          gDate: selectedDay.gDate,
+          time: selectedTime,
+          duration: selectedService.duration,
+          name: name,
+          phone: phone,
+          service: selectedService.name
+        }),
+        signal: controller.signal
+      });
+
+      clearTimeout(timeoutId);
+      const result = await response.json();
+
+      if (result.status === "success") {
+        showAlert(`✅ نوبت شما برای ${selectedDay.jText} ساعت ${selectedTime} با موفقیت قطعی شد!`, "success");
+        bookedData.push({ date: selectedDay.gDate, time: selectedTime, duration: selectedService.duration });
+        selectedTime = null;
+        renderSlots();
+        document.getElementById("custName").value = "";
+      } else {
+        showAlert("❌ " + (result.message || "خطا در ثبت نوبت. دوباره تلاش کنید."), "error");
+        fetchBookings();
+      }
+    } catch (err) {
+      showAlert("⚠️ خطا در اتصال اینترنت! نوبت شما ثبت نشد. لطفاً اینترنت خود را بررسی کنید و دوباره بزنید.", "error");
+    } finally {
+      btn.disabled = false;
+      btn.innerText = "ثبت قطعی نوبت";
+    }
+  }
+
+  function showAlert(msg, type) {
+    const alertBox = document.getElementById("alertBox");
+    alertBox.className = "alert " + type;
+    alertBox.innerText = msg;
+    alertBox.style.display = "block";
+  }
+
+  initDays();
+  fetchBookings();
+</script>
+
+</body>
+</html>
